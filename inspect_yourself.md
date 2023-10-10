@@ -9,6 +9,6 @@ Disallow: /flag
 Disallow: /other
 ````
 
-I tried the flag first, but the link redirected to a rickroll. /flag had a lot of important information, but /other ended up containing the flag. I already had devtools open, but the flag was stored in plaintext with white font on a white background for extra security. Overall this was a fun challenge, definitely a lot easier than last week's binary exploitation. It'll be interesting to see how the season progresses.
+/flag had a lot of important information, but /other ended up containing the flag. I already had devtools open, but the flag was stored in plaintext with white font on a white background for extra security. Overall this was a fun challenge, definitely a lot easier than last week's binary exploitation. It'll be interesting to see how the season progresses.
 
 This writeup feels uncomfortably simmilar to canvas discussion posts I have to make each week, lol.
