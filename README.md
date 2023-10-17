@@ -1,3 +1,3 @@
 # osusec-writeups
-Writeups for OSUSEC CTF challenges
+Writeups for OSUSEC CTF challenges  
 Hopefully updated weekly.
