@@ -3,7 +3,7 @@
 
 
 ### 1 (of 1)
-Full disclaimer I really limped through this and was heavily aided by chatgpt and the author of the challenge.
+Full disclaimer, I really limped through this and was heavily aided by chatgpt and the author of the challenge.  
 Zip files may seem like directories, but they are really just weird files with metadata that lets zip protocols extract them into directories. When viewing the hexdump of a file, you can usually find headers signifying what type of file the data is supposed to represent. For example, bitmaps start with bm or executables start with elf. For zip files, this header is PK. However, there are often additional headers that may or may not influence file behavior. For this challenge we are given a program that asks for a base64 string and a password, and creates a zip containing that data encrypted with that password. However, if we dive into the source code we can see that in addition to encrypting the given input, the program utilises the same password to encrpyt a header in the file data, presumably the flag. Since this encryption method is both well know and symetrical, we can just implement a version of it ourself to re-encrypt / decrypt the header of interest. This implementation is below. Doing this will just spit out the flag, so I've removed the header in case someone manages to find my githb before the challenge is over.
 
 
